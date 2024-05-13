@@ -77,8 +77,7 @@ final class ContactForm implements Integration {
 			\add_filter( 'wpcf7_autop_or_not', '__return_false', PHP_INT_MAX );
 		}
 
-		if( get_prop( $this->config, [ 'feedback' ], '' ) !== '' ) {
-			\wecodeart( 'toasts' );
+		if( get_prop( $this->config, [ 'feedback' ], '' ) === 'toast' ) {
 			\add_filter( 'wpcf7_form_response_output', '__return_empty_string', PHP_INT_MAX );
 		}
 	}
@@ -105,6 +104,9 @@ final class ContactForm implements Integration {
 			case 'modal': 
 				$positions = explode( ' ', get_prop( $this->config, [ 'feedback_position' ], '' ) );
 				\wecodeart( 'styles' )->Utilities->load( $positions );
+			break;
+			case 'toast': 
+				\wecodeart( 'toasts' );
 			break;
 		endswitch;
 
@@ -188,7 +190,7 @@ final class ContactForm implements Integration {
 
 		\wecodeart( 'assets' )->add_script( $this->make_handle(), [
 			'version'	=> wecodeart( 'version' ),
-			'deps'		=> [ 'wecodeart-support-assets', 'contact-form-7' ],
+			'deps'		=> [ 'wecodeart-support-assets', 'wecodeart-support-assets-template', 'contact-form-7' ],
 			'locale'	=> [
 				'feedback'	=> [
 					'type' 		=> $feedback,
@@ -245,7 +247,7 @@ final class ContactForm implements Integration {
 												template: Selector.findOne('#wp-toast-template').innerHTML
 											}).toHtml();
 											
-											Selector.findOne('.wp-toast-container').appendChild(template);
+											Selector.findOne('.wp-site-toasts')?.appendChild(template);
 
 										 	return new Toast(template, { autoRemove: true }).show();
 										break;
